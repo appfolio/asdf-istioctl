@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+cd /tmp
+
+export ISTIO_VERSION=$ASDF_INSTALL_VERSION
+curl -L https://istio.io/downloadIstio | sh - >/dev/null
+
+rm -rf "$ASDF_DOWNLOAD_PATH"
+if [ -z "$ISTIO_VERSION" ]; then
+  filename=$(echo istio-* | awk '{print $NF;}')
+  mv "./$filename" "$ASDF_DOWNLOAD_PATH"
+else
+  mv "./istio-$ISTIO_VERSION" "$ASDF_DOWNLOAD_PATH"
+fi

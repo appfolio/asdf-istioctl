@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+mkdir -p "$ASDF_INSTALL_PATH"
+rsync -a --delete "$ASDF_DOWNLOAD_PATH/" "$ASDF_INSTALL_PATH"
