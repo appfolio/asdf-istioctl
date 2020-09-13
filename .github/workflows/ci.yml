@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - '*'
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  test-linux:
+    name: Test on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Git
+        run: |
+          git config --global credential.helper store
+          echo "https://.:${{ github.token }}@github.com"> ~/.git-credentials
+      - name: Run tests
+        uses: asdf-vm/actions/plugin-test@v1
+        with:
+          command: istioctl version --remote=false
+        env:
+          GITHUB_API_TOKEN: ${{ github.token }} 
+  test-macos:
+    name: Test on macOS
+    runs-on: macos-latest
+    steps:
+      - name: Configure Git
+        run: |
+          git config --global credential.helper store
+          echo "https://.:${{ github.token }}@github.com"> ~/.git-credentials
+      - name: Run tests 
+        uses: asdf-vm/actions/plugin-test@v1
+        with:
+          command: istioctl version --remote=false
+        env:
+          GITHUB_API_TOKEN: ${{ github.token }} 
+  lint:
+    name: Lint
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: brew install shfmt
+      - name: Check syntax
+        run: shfmt -d -i 2 -ci .
